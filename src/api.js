@@ -1,9 +1,18 @@
 const http = require('http');
+const TeamService = require('./service/teamService')
 
 const routes = (route) => {
 	switch (route) {
+		case '/team:get': return async (request, response) => {
+			const service = new TeamService()
+			const data = await service.getTeamPokemon()
+			response.write(JSON.stringify(data))
+			return response.end()
+		}
 		default: return (request, response) => {
-			response.write('Hello World!')
+			response.write(JSON.stringify({
+				text: 'Hello World',
+			}))
 			return response.end();
 		}
 	}
@@ -12,10 +21,11 @@ const routes = (route) => {
 const handler = function (request, response) {
 	const { url, method } = request
 	const routeKey = `${url}:${method.toLowerCase()}`
+	console.log(routeKey)
 	const chosen = routes(routeKey)
 
 	response.writeHead(200, {
-		'Content-Type': 'text/html'
+		'Content-Type': 'application/json',
 	})
 	return chosen(request, response)
 }
